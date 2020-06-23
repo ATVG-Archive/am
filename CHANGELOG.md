@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](semver.md).
 ### Fixed
 ### Security
 
+## [1.4.0] - 2020-06-23
+
+### Changed
+* AM is now able to use multiple args, it will consume all args up to a `--`. Args after ar passed to Make or Ninja
+
 ## [1.3.0] - 2020-06-23
 
 ### Added
