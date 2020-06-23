@@ -13,12 +13,12 @@ and this project adheres to [Semantic Versioning](semver.md).
 ### Fixed
 ### Security
 
-## [1.3.0] - 23.06.2020
+## [1.3.0] - 2020-06-23
 
 ### Added
 * Check that Make, CMake and Ninja are installed
 
-## [1.2.0] - 23.06.2020
+## [1.2.0] - 2020-06-23
 
 ### Added
 * Flag `-l` to cat the `build/am-build.log`
@@ -29,12 +29,12 @@ and this project adheres to [Semantic Versioning](semver.md).
 ### Fixed
 * Fix name of the ninja build file
 
-## [1.1.0] - 23.06.2020
+## [1.1.0] - 2020-06-23
 
 ### Added
 * Check for Ninja and Makefile before CMakeLists
 
-## [1.0.0] - 23.06.2020
+## [1.0.0] - 2020-06-23
 
 ### Added
 * First Implementation
