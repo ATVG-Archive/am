@@ -1,0 +1,140 @@
+#!/bin/bash
+VERSION="1.3"
+LOG="am-build.log"
+echo "Automated Make v${VERSION}"
+
+if ! hash make 2>/dev/null; then
+  echo "Make not found, please make sure its installed!"
+  exit 1
+fi
+
+if ! hash cmake 2>/dev/null; then
+  echo "CMake not found, please make sure its installed!"
+  exit 1
+fi
+
+if ! hash ninja 2>/dev/null; then
+  echo "Ninja not found, please make sure its installed!"
+  exit 1
+fi
+
+USE_LOG=no
+
+if [ "$1" = "-l" ]; then
+  USE_LOG=yes
+  shift
+fi
+
+CMAKE_FILE="CMakeLists.txt"
+MAKE_FILE="Makefile"
+NINJA_FILE="build.ninja"
+
+function refresh_builddir() {
+  echo "Checking for build/"
+  if [ -d build ]; then
+    echo "Checking for build backup"
+    if [ -d build.old ]; then
+      echo "Removing build backup"
+      rm -rf build.old
+    fi
+    echo "Backing up old build/"
+    mv build build.old
+  fi
+  echo "Creating new build/"
+  mkdir build
+}
+
+function log_header() {
+  echo "========= Automated Make v${VERSION} =========" > $LOG
+}
+
+function log_end() {
+  echo "========= Automated Build - END =========" >> $LOG
+}
+
+function log_cat() {
+  if [ "${USE_LOG}" = "yes" ] && [ -e "am-build.log" ]; then
+    cat $LOG
+  fi
+}
+
+function run_ninja() {
+  echo "Running Ninja"
+  echo "========= Running Ninja =========" >> $LOG
+  ninja $@ >> $LOG
+}
+
+function run_make() {
+  echo "Running Make"
+  echo "========= Running Make =========" >> $LOG
+  make $@ >> $LOG
+}
+
+function run_cmake() {
+  echo "Running Cmake"
+  echo "========= Running CMake =========" >> $LOG
+  cmake -G Ninja $@ >> $LOG
+}
+
+refresh_builddir
+
+echo "Checking for Cmake"
+if [ ! -e "${CMAKE_FILE}" ]; then
+  echo "No Cmake file!"
+
+  echo "Checking for Make"
+  if [ ! -e "${MAKE_FILE}" ]; then
+    echo "No Make file!"
+    if [ ! -e "${NINJA_FILE}" ]; then
+      echo "No Ninja file either!"
+      echo "Nothing to do .. exiting"
+      exit 1
+    else
+        log_header
+	run_ninja $@
+        log_end
+    fi
+  else
+    log_header
+    run_make $@
+    log_end
+  fi
+
+  echo "Build complete!"
+  log_cat
+  exit 0
+fi
+echo "Cmake found"
+
+echo "PushD to build/"
+pushd build
+
+log_header
+run_cmake ".."
+
+FOUND_BUILD=no
+echo "Checking for Make"
+if [ -e "${MAKE_FILE}" ]; then
+  FOUND_BUILD=yes
+  run_make $@
+else
+  echo "Make not found; Checking for Ninja"
+  if [ -e "${NINJA_FILE}" ]; then
+    FOUND_BUILD=yes
+    run_ninja $@
+  fi
+fi
+
+if [ "${FOUND_BUILD}" = "no" ]; then
+  echo "Neither Make nor Ninja build file found!"
+  echo "Nothing to do .. exiting"
+  exit 1
+fi
+
+log_end
+
+echo "Build complete!"
+log_cat
+
+echo "PopD"
+popd
