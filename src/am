@@ -18,6 +18,21 @@ if ! hash ninja 2>/dev/null; then
   exit 1
 fi
 
+function print_help() {
+  echo ""
+  echo "AM is a build automation tool that uses Make, CMake and Ninja"
+  echo "Copyright 2015-2020 ATVG-Studios, freely open-sourced under the OSPL20"
+  echo ""
+  echo "Usage: am [-l|-h] -- (-j)"
+  echo ""
+  echo "(All arguments following -- are passed down to Make or Ninja)"
+  echo "(-j is just an example, all args from Make or Ninja are supported)"
+  echo ""
+  echo "Available Args:"
+  echo "  -l --print-log               Prints the build log (am-build.log) after everything is done"
+  echo "  -h --help                    Prints this help dialog"
+}
+
 USE_LOG=no
 for arg in "$@"; do
   if [ "$arg" = "--" ]; then
@@ -26,13 +41,18 @@ for arg in "$@"; do
   fi
 
   case $arg in
-    "-l")
+    -l|--print-log)
     USE_LOG=yes
+    ;;
+    -h|--help)
+    print_help
+    exit 0
     ;;
   esac
 
   shift
 done
+
 
 ARGS="$@"
 CMAKE_FILE="CMakeLists.txt"
