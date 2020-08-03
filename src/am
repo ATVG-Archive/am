@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="1.4.0"
+VERSION="1.5.0"
 LOG="am-build.log"
 echo "Automated Make v${VERSION}"
 
@@ -23,17 +23,21 @@ function print_help() {
   echo "AM is a build automation tool that uses Make, CMake and Ninja"
   echo "Copyright 2015-2020 ATVG-Studios, freely open-sourced under the OSPL20"
   echo ""
-  echo "Usage: am [-l|-h] -- (-j)"
+  echo "Usage: am [-g|-l|-h|-n] -- (-j)"
   echo ""
   echo "(All arguments following -- are passed down to Make or Ninja)"
   echo "(-j is just an example, all args from Make or Ninja are supported)"
   echo ""
   echo "Available Args:"
+  echo "  -g --check-git-submodules    Check if a .gitmodules file exists and runs git submodule init/update"
   echo "  -l --print-log               Prints the build log (am-build.log) after everything is done"
   echo "  -h --help                    Prints this help dialog"
+  echo "  -n --ninja		       Passes -GNinja to CMake"
 }
 
+CARGS=""
 USE_LOG=no
+USE_CHECK_GIT=no
 for arg in "$@"; do
   if [ "$arg" = "--" ]; then
     shift
@@ -41,12 +45,18 @@ for arg in "$@"; do
   fi
 
   case $arg in
+    -g|--check-git-submodules)
+    USE_CHECK_GIT=yes
+    ;;
     -l|--print-log)
     USE_LOG=yes
     ;;
     -h|--help)
     print_help
     exit 0
+    ;;
+    -n|--ninja)
+    CARGS="$CARGS -GNinja"
     ;;
   esac
 
@@ -58,6 +68,13 @@ ARGS="$@"
 CMAKE_FILE="CMakeLists.txt"
 MAKE_FILE="Makefile"
 NINJA_FILE="build.ninja"
+
+function check_error() {
+  if [ "$?" != "0" ]; then
+    echo "An error occured in this state, please check the $LOG"
+    exit 1
+  fi
+}
 
 function refresh_builddir() {
   echo "Checking for build/"
@@ -88,25 +105,51 @@ function log_cat() {
   fi
 }
 
+function check_git_submodules() {
+  echo "Checking if Git is installed .."
+  if ! hash git 2>/dev/null; then
+    echo "Git not found, cannot run check-git-submodules! Skipping ..."
+  else
+    echo "Checking for .gitmodules file"
+    if [ -e ".gitmodules" ]; then
+      echo ".gitmodules found, initializing modules"
+      git submodule init >> $LOG
+      check_error
+      echo "Updating Git Modules"
+      git submodule update >> $LOG
+      check_error
+      echo "Finished"
+    fi
+  fi
+}
+
 function run_ninja() {
   echo "Running Ninja"
   echo "========= Running Ninja =========" >> $LOG
   ninja $ARGS >> $LOG
+  check_error
 }
 
 function run_make() {
   echo "Running Make"
   echo "========= Running Make =========" >> $LOG
   make $ARGS >> $LOG
+  check_error
 }
 
 function run_cmake() {
   echo "Running Cmake"
   echo "========= Running CMake =========" >> $LOG
-  cmake .. >> $LOG
+  cmake $CARGS .. >> $LOG
+  check_error
 }
 
 refresh_builddir
+
+if [ "$USE_CHECK_GIT" = "yes" ]; then
+  echo "Checking for Git (--check-git-submodules used)"
+  check_git_submodules
+fi
 
 echo "Checking for Cmake"
 if [ ! -e "${CMAKE_FILE}" ]; then

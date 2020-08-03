@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](semver.md).
 ### Fixed
 ### Security
 
+## [1.5.0] - 2020-08-03
+
+### Added
+* `-g` Flag allows to init and update git submodules before a build
+
+### Change
+* Check for a non-zero error code after calling git, cmake, make and ninja
+
 ## [1.4.0] - 2020-06-23
 
 ### Changed
