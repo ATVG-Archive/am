@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="1.5.0"
+VERSION="1.6.0"
 LOG="am-build.log"
 echo "Automated Make v${VERSION}"
 
@@ -8,21 +8,27 @@ function print_help() {
   echo "AM is a build automation tool that uses Make, CMake and Ninja"
   echo "Copyright 2015-2020 ATVG-Studios, freely open-sourced under the OSPL20"
   echo ""
-  echo "Usage: am [-g|-l|-h|-n] -- (-j)"
+  echo "Usage: am [-c|-td|-l|-h|-m] -- (-j)"
   echo ""
   echo "(All arguments following -- are passed down to Make or Ninja)"
   echo "(-j is just an example, all args from Make or Ninja are supported)"
   echo ""
   echo "Available Args:"
-  echo "  -g --check-git-submodules    Check if a .gitmodules file exists and runs git submodule init/update"
+  echo "  -c --clone                   Clone the given Git repository before building"
+  echo " -td --clone-target-directory  Specify where to clone into; Move there and run the default AM behaviour"
+  echo "     --no-git-modules          DISABLE the check if a .gitmodules file exists"
   echo "  -l --print-log               Prints the build log (am-build.log) after everything is done"
   echo "  -h --help                    Prints this help dialog"
-  echo "  -n --ninja		       Passes -GNinja to CMake"
+  echo "  -m --make                    Passes -GMake to CMake instead of -GNinja"
 }
 
 CARGS=""
+USE_MAKE=no
 USE_LOG=no
-USE_CHECK_GIT=no
+USE_CHECK_GIT=yes
+USE_CLONE=no
+ARG_CLONE_URI=void
+ARG_CLONE_TARGET=""
 for arg in "$@"; do
   if [ "$arg" = "--" ]; then
     shift
@@ -30,8 +36,16 @@ for arg in "$@"; do
   fi
 
   case $arg in
-    -g|--check-git-submodules)
-    USE_CHECK_GIT=yes
+    -c|--clone)
+    USE_CLONE=yes
+    shift
+    ARG_CLONE_URI="$1"
+    ;;
+    -td|--clone-target-directory)
+    ARG_CLONE_TARGET="$1"
+    ;;
+    --no-git-modules)
+    USE_CHECK_GIT=no
     ;;
     -l|--print-log)
     USE_LOG=yes
@@ -40,14 +54,19 @@ for arg in "$@"; do
     print_help
     exit 0
     ;;
-    -n|--ninja)
-    CARGS="$CARGS -GNinja"
+    -m|--make)
+    USE_MAKE=yes
     ;;
   esac
 
   shift
 done
 
+if [ "$USE_MAKE" = "yes" ]; then
+  CARGS="$CARGS -GMake"
+else
+  CARGS="$CARGS -GNinja"
+fi
 
 ARGS="$@"
 CMAKE_FILE="CMakeLists.txt"
@@ -110,6 +129,18 @@ function check_git_submodules() {
   fi
 }
 
+function run_clone() {
+  if ! hash git 2>/dev/null; then
+    echo "Git not found, please make sure its installed!"
+    exit 1
+  fi
+
+  echo "Cloning $ARG_CLONE_URI into $ARG_CLONE_TARGET"
+  git clone "$ARG_CLONE_URI" "$ARG_CLONE_TARGET"
+  check_error
+  echo "Finished"
+}
+
 function run_ninja() {
   if ! hash ninja 2>/dev/null; then
     echo "Ninja not found, please make sure its installed!"
@@ -145,6 +176,17 @@ function run_cmake() {
   cmake $CARGS .. >> $LOG
   check_error
 }
+
+if [ "$USE_CLONE" = "yes" ]; then
+  run_clone
+
+  if [ "$ARG_CLONE_TARGET" = "" ]; then
+    exit 0
+  else
+    echo "Moving to $ARG_CLONE_TARGET"
+    pushd "$ARG_CLONE_TARGET"
+  fi
+fi
 
 refresh_builddir
 

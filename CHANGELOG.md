@@ -7,16 +7,26 @@ and this project adheres to [Semantic Versioning](semver.md).
 ## [Unreleased]
 
 ### Added
-* Help command
 ### Changed
 ### Deprecated
 ### Removed
 ### Fixed
 ### Security
 
+## [1.6.0] - 2020-08-04
+
+### Added
+* `-c` To Clone a given git repository
+* `-td` Path to clone into; Then move there and execute normal behaviour
+
+### Changed
+* Ninja is now default, `-n` was replace with `-m` which now enables GNU Make
+* Git Submodules are now pulled by default `--no-git-modules` disables this
+
 ## [1.5.0] - 2020-08-03
 
 ### Added
+* Help command
 * `-g` Flag allows to init and update git submodules before a build
 
 ### Change
