@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](semver.md).
 
 ### Added
 * `--update-self` to install the latest copy of AM
+* `--version` print version, license url and project url
 ### Changed
 * `-td` Can be passed as normal target-directory for where AM should run
 * Show git submodule log outputs

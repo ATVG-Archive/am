@@ -21,6 +21,7 @@ function print_help() {
   echo "  -h   --help                      Prints this help dialog"
   echo "  -m   --make                      Passes -GMake to CMake instead of -GNinja"
   echo "       --update-self               Install the latest Stable AM version"
+  echo "  -v   --version                   Print the Version; License Link and Project Link"
 }
 
 CARGS=""
@@ -68,6 +69,14 @@ for arg in "$@"; do
     chmod +x "$(which $0)"
     popd
     echo "Done"
+    exit 0
+    ;;
+    -v|--version)
+    echo ""
+    echo "  Copyright 2015-2020 ATVG-Studios and Thomas Obernosterer"
+    echo ""
+    echo "  OSPL20 License : https://atvg-studios.com/ospl/ospl20"
+    echo "  Open Source at : https://gitlab.atvg-studios.com/atvg-studios/am"
     exit 0
     ;;
   esac
