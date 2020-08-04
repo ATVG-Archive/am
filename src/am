@@ -195,10 +195,12 @@ if [ "$USE_CLONE" = "yes" ]; then
 
   if [ "$ARG_CLONE_TARGET" = "" ]; then
     exit 0
-  else
-    echo "Moving to $ARG_CLONE_TARGET"
-    pushd "$ARG_CLONE_TARGET"
   fi
+fi
+
+if [ "$ARG_CLONE_TARGET" != "" ]; then
+  echo "Moving to $ARG_CLONE_TARGET"
+  pushd "$ARG_CLONE_TARGET"
 fi
 
 refresh_builddir
