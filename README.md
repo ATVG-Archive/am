@@ -2,7 +2,7 @@
 
 This is the AM - Automated Make Build System. This script automates the usage of Makefile, Ninja and CMake into a way it is simple to use.
 
-**This Script does not replace Make, CMake or Ninja. It only automates them based on what files exit!**
+**This Script does not replace Make, CMake or Ninja. It only automates them based on what files exist!**
 
 This script could be improved more, but it works. And this is how:
 
