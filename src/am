@@ -61,13 +61,11 @@ for arg in "$@"; do
     ;;
     --update-self)
     echo "Running self-updater"
-    pushd /tmp
     echo "Download newest version"
     wget https://gitlab.atvg-studios.com/atjontv/automated-make/-/raw/stable/src/am
     echo "Install newest version"
     mv am "$(which $0)"
     chmod +x "$(which $0)"
-    popd
     echo "Done"
     exit 0
     ;;
