@@ -7,15 +7,20 @@ and this project adheres to [Semantic Versioning](semver.md).
 ## [Unreleased]
 
 ### Added
+### Changed
+### Deprecated
+### Removed
+### Fixed
+### Security
+
+## [1.7.0] - 2020-08-04
+
+### Added
 * `--update-self` to install the latest copy of AM
 * `--version` print version, license url and project url
 ### Changed
 * `-td` Can be passed as normal target-directory for where AM should run
 * Show git submodule log outputs
-### Deprecated
-### Removed
-### Fixed
-### Security
 
 ## [1.6.0] - 2020-08-04
 
