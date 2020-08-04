@@ -212,7 +212,7 @@ fi
 refresh_builddir
 
 if [ "$USE_CHECK_GIT" = "yes" ]; then
-  echo "Checking for Git (--check-git-submodules used)"
+  echo "Checking for Git Modules"
   check_git_submodules
 fi
 
