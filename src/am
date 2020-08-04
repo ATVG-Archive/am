@@ -133,10 +133,10 @@ function check_git_submodules() {
     fi
 
     echo "Initializing modules"
-    git submodule init >> $LOG
+    git submodule init
     check_error
     echo "Updating Git Modules"
-    git submodule update >> $LOG
+    git submodule update
     check_error
     echo "Finished"
   fi
