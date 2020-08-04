@@ -13,6 +13,12 @@ and this project adheres to [Semantic Versioning](semver.md).
 ### Fixed
 ### Security
 
+## [1.7.1] - 2020-08-04
+
+### Fixed
+- Wrong argument shifting for -c and -td
+- Stage name for Git submodule check
+
 ## [1.7.0] - 2020-08-04
 
 ### Added
