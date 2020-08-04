@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](semver.md).
 ## [Unreleased]
 
 ### Added
+* `--update-self` to install the latest copy of AM
 ### Changed
 ### Deprecated
 ### Removed
