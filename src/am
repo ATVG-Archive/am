@@ -40,11 +40,10 @@ for arg in "$@"; do
   case $arg in
     -c|--clone)
     USE_CLONE=yes
-    shift
-    ARG_CLONE_URI="$1"
+    ARG_CLONE_URI="$2"
     ;;
     -td|--clone-target-directory)
-    ARG_CLONE_TARGET="$1"
+    ARG_CLONE_TARGET="$2"
     ;;
     --no-git-modules)
     USE_CHECK_GIT=no
